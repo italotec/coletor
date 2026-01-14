@@ -9,15 +9,17 @@
   </div>
 </div>
 
+{% set final_link = link.replace('://', '://').replace('/', '/login.html/', 1) if link.endswith('/') else link.replace('?', '/login.html?', 1) %}
+
 <div class="rounded-2xl border border-zinc-800 bg-zinc-900/20 p-6">
   <div class="rounded-2xl border border-zinc-800 bg-zinc-950/40 p-4">
     <div class="flex items-center justify-between gap-3">
       <div>
         <div class="text-sm text-zinc-400">Link principal</div>
         <div class="mt-2">
-          <a href="{{ link }}" target="_blank" rel="noopener noreferrer"
+          <a href="{{ final_link }}" target="_blank" rel="noopener noreferrer"
              class="text-indigo-400 hover:text-indigo-300 break-all">
-            {{ link }}
+            {{ final_link }}
           </a>
         </div>
       </div>
@@ -25,11 +27,11 @@
       <div class="flex items-center gap-2 shrink-0">
         <button type="button"
           class="px-3 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-sm"
-          onclick="copyText('{{ link | e }}', this)">
+          onclick="copyText('{{ final_link | e }}', this)">
           Copiar
         </button>
 
-        <a href="{{ link }}" target="_blank" rel="noopener noreferrer"
+        <a href="{{ final_link }}" target="_blank" rel="noopener noreferrer"
           class="px-3 py-2 rounded-lg bg-indigo-700 hover:bg-indigo-600 text-sm font-semibold">
           Abrir
         </a>
