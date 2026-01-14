@@ -9,12 +9,7 @@ def _root_domain_from_host(host: str) -> str:
     """
     Extracts root domain from a hostname.
     Example:
-      sistema.verificacaopro.com -> verificacaopro.com
-
-    Notes:
-    - This uses the "last 2 labels" approach.
-    - Good for verificacaopro.com style domains.
-    - If host is localhost/127.0.0.1 or has no dots, returns host itself.
+      sistema.scopebrazil.com -> scopebrazil.com
     """
     host = (host or "").split(":")[0].strip().lower()
     if not host:
@@ -46,29 +41,18 @@ def dashboard():
 @accounts_bp.get("/links")
 @login_required
 def links_page():
-    # Determine scheme properly behind nginx (X-Forwarded-Proto)
     proto = request.headers.get("X-Forwarded-Proto", request.scheme)
-
     host = request.host or ""
     host_no_port = host.split(":")[0]
+
     root_domain = _root_domain_from_host(host_no_port)
 
-    # Root domain link + ref
+    # ONLY root domain link
     root_link = f"{proto}://{root_domain}/?ref={current_user.id}"
-
-    # Also provide current host link (subdomain) + ref (optional but useful)
-    current_link = f"{proto}://{host_no_port}/?ref={current_user.id}"
-
-    links = [
-        {"label": "Link principal (root domain)", "url": root_link},
-        {"label": "Link do subdomínio atual", "url": current_link},
-    ]
 
     return render_template(
         "links.html",
         title="Links",
-        links=links,
-        root_domain=root_domain,
-        host=host_no_port,
-        proto=proto
+        link=root_link,
+        root_domain=root_domain
     )
