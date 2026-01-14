@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="{{ url_for('static', filename='app.css') }}">
-  <title>{{ title or "Contas" }}</title>
+  <title>{{ title or "Squad Accounts" }}</title>
 </head>
 <body class="bg-zinc-950 text-zinc-100">
   <div class="max-w-6xl mx-auto px-4 py-6">
@@ -13,19 +13,40 @@
       <div class="flex items-center gap-3">
         <div class="w-10 h-10 rounded-xl bg-zinc-800 flex items-center justify-center font-bold">S</div>
         <div>
-          <div class="text-lg font-semibold">Contas Coletadas</div>
+          <div class="text-lg font-semibold">Squad Accounts</div>
           <div class="text-xs text-zinc-400">dark • clean • by day</div>
         </div>
       </div>
 
       <div class="flex items-center gap-3">
         {% if current_user.is_authenticated %}
-          <span class="text-sm text-zinc-300">Olá, <b>{{ current_user.username }}</b></span>
-          <a class="text-sm px-3 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700" href="{{ url_for('accounts.dashboard') }}">Dashboard</a>
-          {% if current_user.is_admin %}
-            <a class="text-sm px-3 py-2 rounded-lg bg-indigo-700 hover:bg-indigo-600" href="{{ url_for('admin.admin_users') }}">Admin</a>
+
+          {# --- Build root domain + ref link --- #}
+          {% set _host = (request.host or "").split(":")[0] %}
+          {% set _parts = _host.split(".") if _host else [] %}
+          {% if _host in ["localhost", "127.0.0.1"] or (_parts|length) < 2 %}
+            {% set _root = _host %}
+          {% else %}
+            {% set _root = _parts[-2] ~ "." ~ _parts[-1] %}
           {% endif %}
-          <a class="text-sm px-3 py-2 rounded-lg bg-zinc-900 border border-zinc-800 hover:bg-zinc-800" href="{{ url_for('auth.logout') }}">Sair</a>
+          {% set _proto = request.headers.get("X-Forwarded-Proto", request.scheme) %}
+          {% set links_url = _proto ~ "://" ~ _root ~ "/?ref=" ~ current_user.id %}
+
+          <span class="text-sm text-zinc-300">Olá, <b>{{ current_user.username }}</b></span>
+
+          <a class="text-sm px-3 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700"
+             href="{{ url_for('accounts.dashboard') }}">Dashboard</a>
+
+          <a class="text-sm px-3 py-2 rounded-lg bg-zinc-900 border border-zinc-800 hover:bg-zinc-800"
+             href="{{ links_url }}" target="_blank" rel="noopener noreferrer">Links</a>
+
+          {% if current_user.is_admin %}
+            <a class="text-sm px-3 py-2 rounded-lg bg-indigo-700 hover:bg-indigo-600"
+               href="{{ url_for('admin.admin_users') }}">Admin</a>
+          {% endif %}
+
+          <a class="text-sm px-3 py-2 rounded-lg bg-zinc-900 border border-zinc-800 hover:bg-zinc-800"
+             href="{{ url_for('auth.logout') }}">Sair</a>
         {% endif %}
       </div>
     </div>
