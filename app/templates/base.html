@@ -20,25 +20,13 @@
 
       <div class="flex items-center gap-3">
         {% if current_user.is_authenticated %}
-
-          {# --- Build root domain + ref link --- #}
-          {% set _host = (request.host or "").split(":")[0] %}
-          {% set _parts = _host.split(".") if _host else [] %}
-          {% if _host in ["localhost", "127.0.0.1"] or (_parts|length) < 2 %}
-            {% set _root = _host %}
-          {% else %}
-            {% set _root = _parts[-2] ~ "." ~ _parts[-1] %}
-          {% endif %}
-          {% set _proto = request.headers.get("X-Forwarded-Proto", request.scheme) %}
-          {% set links_url = _proto ~ "://" ~ _root ~ "/?ref=" ~ current_user.id %}
-
           <span class="text-sm text-zinc-300">Olá, <b>{{ current_user.username }}</b></span>
 
           <a class="text-sm px-3 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700"
              href="{{ url_for('accounts.dashboard') }}">Dashboard</a>
 
           <a class="text-sm px-3 py-2 rounded-lg bg-zinc-900 border border-zinc-800 hover:bg-zinc-800"
-             href="{{ links_url }}" target="_blank" rel="noopener noreferrer">Links</a>
+             href="{{ url_for('accounts.links_page') }}">Links</a>
 
           {% if current_user.is_admin %}
             <a class="text-sm px-3 py-2 rounded-lg bg-indigo-700 hover:bg-indigo-600"
